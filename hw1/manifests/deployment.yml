@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-hw1
+  namespace: otus-hw1
+  labels:
+    app: otus-hw1
+spec:
+  selector:
+    matchLabels:
+      app: otus-hw1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: otus-hw1
+    spec:
+      containers:
+        - image: ringob/otus-hw1:v1.1
+          name: app
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health/
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health/
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 30
