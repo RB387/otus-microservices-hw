@@ -24,17 +24,17 @@ func main() {
 
 	storage := user.NewPostgresStorage(postgres)
 
-	getHandler := get_user.New(storage, userNameParam)
-	deleteHandler := delete_user.New(storage, userNameParam)
-	updateHandler := update_user.New(storage, userNameParam)
 	createHandler := create_user.New(storage)
+	getHandler := get_user.New(storage, userNameParam)
+	updateHandler := update_user.New(storage, userNameParam)
+	deleteHandler := delete_user.New(storage, userNameParam)
 
 	userPath := fmt.Sprintf("/user/:%s", userNameParam)
 
-	application.GET(userPath, getHandler.Handle)
-	application.DELETE(userPath, deleteHandler.Handle)
-	application.PATCH(userPath, updateHandler.Handle)
 	application.POST("/user", createHandler.Handle)
+	application.GET(userPath, getHandler.Handle)
+	application.PATCH(userPath, updateHandler.Handle)
+	application.DELETE(userPath, deleteHandler.Handle)
 
 	log.Fatal(application.Run())
 }

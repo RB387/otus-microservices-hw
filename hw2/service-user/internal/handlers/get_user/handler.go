@@ -31,7 +31,7 @@ func (h *Handler) Handle(ctx context.Context, r *app.Request) (app.Response, err
 	case user.NotFound:
 		return nil, app.NotFound
 	case nil:
-		return map[string]interface{}{
+		return app.Response{
 			"username":  usr.Username,
 			"firstName": usr.FirstName,
 			"lastName":  usr.LastName,
