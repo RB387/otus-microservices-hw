@@ -7,6 +7,7 @@ import (
 	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/handlers/create_user"
 	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/handlers/delete_user"
 	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/handlers/get_user"
+	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/handlers/health"
 	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/handlers/update_user"
 	"github.com/RB387/otus-microservices-hw/hw2/service-user/internal/storages/user"
 	_ "github.com/lib/pq"
@@ -28,6 +29,7 @@ func main() {
 	getHandler := get_user.New(storage, userNameParam)
 	updateHandler := update_user.New(storage, userNameParam)
 	deleteHandler := delete_user.New(storage, userNameParam)
+	heatlhHandler := health.New()
 
 	userPath := fmt.Sprintf("/user/:%s", userNameParam)
 
@@ -35,6 +37,8 @@ func main() {
 	application.GET(userPath, getHandler.Handle)
 	application.PATCH(userPath, updateHandler.Handle)
 	application.DELETE(userPath, deleteHandler.Handle)
+
+	application.GET("/health", heatlhHandler.Handle)
 
 	log.Fatal(application.Run())
 }
