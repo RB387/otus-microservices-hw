@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  repository: ringob/otus-service-user
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.0.2"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: arch.homework
+
+global:
+  postgresql:
+    postgresqlDatabase: "service-user"
+    postgresqlUsername: "postgres"
+    postgresqlPassword: "pass"
+    servicePort: "5432"
+
+migrator:
+  repository: ringob/service-user-hw2-postgres-migrator
+  tag: "0.1.1"
