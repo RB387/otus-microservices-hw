@@ -22,4 +22,3 @@ global:
 migrator:
   repository: ringob/service-user-hw2-postgres-migrator
   tag: "0.1.1"
-  connectRetries: 30

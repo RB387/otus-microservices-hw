@@ -7,4 +7,4 @@ CREATE TABLE users (
    phone		varchar(256) NOT NULL
 );
 -- migrate:down
-DROP TABLE IF EXISTS users
+DROP TABLE IF EXISTS users;
