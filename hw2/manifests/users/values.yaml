@@ -11,6 +11,7 @@ service:
 
 ingress:
   enabled: true
+  host: arch.homework
 
 global:
   postgresql:
