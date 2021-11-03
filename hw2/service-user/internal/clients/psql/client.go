@@ -20,11 +20,5 @@ func NewFromEnv() (*sqlx.DB, error) {
 		host,
 	)
 
-	db, err := sqlx.Connect("postgres", connString)
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	return db, err
+	return sqlx.Connect("postgres", connString)
 }

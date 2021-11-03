@@ -29,7 +29,7 @@ func main() {
 	getHandler := get_user.New(storage, userNameParam)
 	updateHandler := update_user.New(storage, userNameParam)
 	deleteHandler := delete_user.New(storage, userNameParam)
-	heatlhHandler := health.New()
+	healthHandler := health.New()
 
 	userPath := fmt.Sprintf("/user/:%s", userNameParam)
 
@@ -38,7 +38,7 @@ func main() {
 	application.PATCH(userPath, updateHandler.Handle)
 	application.DELETE(userPath, deleteHandler.Handle)
 
-	application.GET("/health", heatlhHandler.Handle)
+	application.GET("/health", healthHandler.Handle)
 
 	log.Fatal(application.Run())
 }

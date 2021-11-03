@@ -56,7 +56,6 @@ func (a *App) handlerWrapper(handler Handler) func(ctx *gin.Context) {
 			ctx.JSON(400, gin.H{
 				"error": err.Error(),
 			})
-			ctx.Header("Content-Type", "application/json; charset=utf-8")
 		case NotFound:
 			ctx.JSON(404, gin.H{
 				"error": err.Error(),
