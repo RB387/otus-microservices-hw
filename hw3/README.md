@@ -14,6 +14,10 @@ helm install users ./manifests/users {-n namespace}
 * PostgreSQL Database: Метрики базы
 * NGINX Ingress controller: Подробные метрики NGINX
 
+Алерты настроены на панели:
+* Response Time max
+* Error Rate [5XX] count [NGINX Ingress]
+
 Benchmark проводился в 200 коннектов и максимум 2000 запросов в секунду
 ```
 fasthttploader -c 200 -q 2000 -t 10s -d 300s http://arch.homework/service-user/user/someusername
