@@ -13,7 +13,7 @@ ingress:
   enabled: true
   host: arch.homework
   monitoring: true
-  customIngress: true
+  customIngress: false
 
 global:
   postgresql:
