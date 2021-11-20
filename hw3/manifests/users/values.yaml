@@ -1,0 +1,89 @@
+replicaCount: 3
+
+image:
+  repository: ringob/otus-service-user
+  tag: "0.0.3"
+
+service:
+  type: ClusterIP
+  port: 80
+  monitoring: true
+
+ingress:
+  enabled: true
+  host: arch.homework
+  monitoring: true
+  customIngress: true
+
+global:
+  postgresql:
+    postgresqlDatabase: "service-user"
+    postgresqlUsername: "postgres"
+    postgresqlPassword: "pass"
+    servicePort: "5432"
+
+migrator:
+  repository: ringob/service-user-hw2-postgres-migrator
+  tag: "0.1.1"
+
+#prometheus:
+#  enabled: true
+#  ingress:
+#    enabled: true
+#    annotations:
+#      kubernetes.io/ingress.class: nginx
+
+kube-prometheus:
+  prometheus:
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+
+grafana:
+  admin:
+    user: "admin"
+    password: "pass"
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+  datasources:
+    secretName: "grafana-secrets"
+  dashboardsProvider:
+    enabled: true
+  dashboardsConfigMaps:
+   - configMapName: service-user-default-dashboard
+     folderName: service-user
+     fileName: grafana-service-user-dashboard.json
+   - configMapName: service-user-default-postgres-dashboard
+     folderName: service-user
+     fileName: grafana-service-user-postgres-dashboard.json
+   - configMapName: service-user-nginx-default-dashboard
+     folderName: service-user
+     fileName: grafana-nginx-dashboard.json
+
+prometheus-postgres-exporter:
+  serviceMonitor:
+    enabled: true
+  config:
+    datasourceSecret:
+      name: postgres-secrets
+      key: psql_uri
+
+
+ingress-nginx:
+  controller:
+    kind: DaemonSet
+    reportNodeInternalIp: true
+    hostPort:
+      enabled: true
+      ports:
+        http: 80
+        https: 443
+    service:
+      type: NodePort
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true

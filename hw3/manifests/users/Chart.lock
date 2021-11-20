@@ -1,0 +1,18 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.13.8
+- name: kube-prometheus
+  repository: https://charts.bitnami.com/bitnami
+  version: 6.3.4
+- name: grafana
+  repository: https://charts.bitnami.com/bitnami
+  version: 7.1.1
+- name: prometheus-postgres-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 2.3.7
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 2.3.0
+digest: sha256:d14958460752625292bbb98488436c28dfeadac0ae1232f5bf2e8e9139215b06
+generated: "2021-11-20T14:25:00.145438+03:00"

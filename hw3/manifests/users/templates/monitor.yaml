@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: users-service-monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "users.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      monitoring: "true"
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+      - ingress-nginx
+      - default
+  endpoints:
+    - port: http
+      path: /metrics
