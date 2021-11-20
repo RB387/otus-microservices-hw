@@ -23,7 +23,22 @@
   "gnetId": null,
   "graphTooltip": 0,
   "iteration": 1637414607715,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [
+        "postgres"
+      ],
+      "targetBlank": true,
+      "title": "New link",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
