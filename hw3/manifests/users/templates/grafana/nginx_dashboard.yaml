@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-user-nginx-default-dashboard
+  labels:
+    {{- include "users.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+  namespace: {{ .Release.Namespace }}
+data:
+  grafana-nginx-dashboard.json: |-
+{{ .Files.Get "nginx_dashboard.json" | indent 4 }}
