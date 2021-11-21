@@ -2,7 +2,8 @@
 
 Запуск:
 ```
-./start.sh
+istioctl install --set profile=demo
+kubectl label namespace default istio-injection=enabled
 kubectl apply -f manifests/
 minikube tunnel
 ```
