@@ -1,0 +1,1 @@
+docker pull amacneil/dbmate:1.12.1 && docker run -v $(pwd)/sql:/db/migrations amacneil/dbmate:1.12.1 new $1

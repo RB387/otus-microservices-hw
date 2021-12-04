@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  labels:
+    {{- include "users.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      serviceAccountName: watcher
+      initContainers:
+        - name: "{{ .Chart.Name }}-init"
+          image: "groundnuty/k8s-wait-for:1.3"
+          args:
+            - "job"
+            - "{{ .Chart.Name }}-migrator"
+      containers:
+        - name: {{ .Chart.Name }}-user
+          image: "{{ .Values.serviceUser.repository }}:{{ .Values.serviceUser.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: web-service
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_db
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_host
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 30
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ template "common.names.fullname" . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    {{- include "users.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-auth
+          image: "{{ .Values.serviceAuth.repository }}:{{ .Values.serviceAuth.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: web-service
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SERVICE_USER_URL
+              value: http://user.{{ .Release.Namespace }}
+            - name: JWT_TOKEN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: jwt_token_key
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ template "common.names.fullname" . }}

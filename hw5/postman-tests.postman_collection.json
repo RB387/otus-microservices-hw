@@ -1,0 +1,752 @@
+{
+	"info": {
+		"_postman_id": "d944fabf-00fa-45b7-a441-0a0534abf032",
+		"name": "Users CRUD Otus HW5 Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register first user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"first_user_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"))",
+							"pm.globals.set(\"first_user_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"))",
+							"pm.globals.set(\"first_user_firstname\", pm.variables.replaceIn(\"{{$randomFirstName}}\"))",
+							"pm.globals.set(\"first_user_lastname\", pm.variables.replaceIn(\"{{$randomLastName}}\"))",
+							"pm.globals.set(\"first_user_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"))",
+							"pm.globals.set(\"first_user_phone\", pm.variables.replaceIn(\"{{$randomPhoneNumber}}\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.request.body.raw)",
+							"console.log(pm.response.text())"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Host",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{first_user_username}}\",\n    \"password\": \"{{first_user_password}}\",\n    \"firstname\": \"{{first_user_firstname}}\",\n    \"lastname\": \"{{first_user_lastname}}\",\n    \"email\": \"{{first_user_email}}\",\n    \"phone\": \"{{first_user_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/register",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read User without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 without token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.text())",
+							"    pm.response.to.have.status(401);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzg2NDQ0MTEsInVzZXJuYW1lIjoibmV3dXNlciJ9.Svgf0aXQrToWtFpVOcP85ge7UU9IHURFKHi9Q8p48iM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user without token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 update without token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.text())",
+							"    pm.response.to.have.status(401);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastname\": \"NewLastName\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login first user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.status(200);",
+							"    pm.globals.set(\"first_user_token\", pm.response.headers.get(\"x-auth-token\"))",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzg2NDQ0MTEsInVzZXJuYW1lIjoibmV3dXNlciJ9.Svgf0aXQrToWtFpVOcP85ge7UU9IHURFKHi9Q8p48iM",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"{{first_user_username}}\", \"password\": \"{{first_user_password}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read user with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 with token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"first_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update first user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"first_user_token\")})",
+							"pm.globals.set(\"first_user_new_lastname\", pm.variables.replaceIn(\"{{$randomLastName}}\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 update with token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.status(200);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastname\": \"{{first_user_new_lastname}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "first user changed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"profile changed\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.jsonBody({",
+							"        \"result\": {",
+							"            \"email\": pm.globals.get(\"first_user_email\"),",
+							"            \"firstName\": pm.globals.get(\"first_user_firstname\"),",
+							"            \"lastName\": pm.globals.get(\"first_user_new_lastname\"),",
+							"            \"phone\": pm.globals.get(\"first_user_phone\"),",
+							"            \"username\": pm.globals.get(\"first_user_username\")",
+							"        }",
+							"    })",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"first_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register second user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"second_user_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"))",
+							"pm.globals.set(\"second_user_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"))",
+							"pm.globals.set(\"second_user_firstname\", pm.variables.replaceIn(\"{{$randomFirstName}}\"))",
+							"pm.globals.set(\"second_user_lastname\", pm.variables.replaceIn(\"{{$randomLastName}}\"))",
+							"pm.globals.set(\"second_user_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"))",
+							"pm.globals.set(\"second_user_phone\", pm.variables.replaceIn(\"{{$randomPhoneNumber}}\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.status(200);",
+							"    pm.globals.set(\"second_user_token\", pm.response.headers.get(\"x-auth-token\"))",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Host",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{second_user_username}}\",\n    \"password\": \"{{second_user_password}}\",\n    \"firstname\": \"{{second_user_firstname}}\",\n    \"lastname\": \"{{second_user_lastname}}\",\n    \"email\": \"{{second_user_email}}\",\n    \"phone\": \"{{second_user_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/register",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read first user by second",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.text())",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"second_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update first user by second",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"second_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403 update with token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.text())",
+							"    pm.response.to.have.status(403);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastname\": \"NewLastName\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "read second user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 with token\", function() {",
+							"    console.log(pm.request.body.raw)",
+							"    console.log(pm.response.json())",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"second_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{second_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{second_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dropdown first user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"first_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{first_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{first_user_username}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dropdown second user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.add({\"key\": \"x-auth-token\", \"value\": pm.globals.get(\"second_user_token\")})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/service-user/user/{{second_user_username}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"service-user",
+						"user",
+						"{{second_user_username}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "arch.homework"
+		}
+	]
+}

@@ -1,0 +1,31 @@
+replicaCount: 1
+
+serviceUser:
+  repository: ringob/service-user-otus-hw5
+  tag: "0.1.3"
+
+serviceAuth:
+  repository: ringob/service-auth-otus-hw5
+  tag: "0.1.2"
+
+service:
+  type: ClusterIP
+  port: 80
+
+auth:
+  jwtTokenKey: "super-secret"
+
+ingress:
+  enabled: true
+  host: arch.homework
+
+global:
+  postgresql:
+    postgresqlDatabase: "service-user"
+    postgresqlUsername: "postgres"
+    postgresqlPassword: "pass"
+    servicePort: "5432"
+
+migrator:
+  repository: ringob/service-user-hw5-postgres-migrator
+  tag: "0.1.1"
