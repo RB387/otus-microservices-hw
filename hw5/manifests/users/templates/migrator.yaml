@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "users-migrator"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "users.labels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: "users-migrator"
+      labels:
+        app: user
+    spec:
+      serviceAccountName: watcher
+      restartPolicy: Never
+      initContainers:
+        - name: "users-init"
+          image: "groundnuty/k8s-wait-for:1.3"
+          args:
+            - "service"
+            - "{{ .Release.Name }}-postgresql"
+      containers:
+        - name: migrator
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_db
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "common.names.fullname" . }}
+                  key: psql_host
+          image: "{{ .Values.migrator.repository }}:{{ .Values.migrator.tag }}"
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ template "common.names.fullname" . }}
+  backoffLimit: 0
